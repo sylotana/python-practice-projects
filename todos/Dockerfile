@@ -1,0 +1,1 @@
+FROM PYTHON:3.12-slim
