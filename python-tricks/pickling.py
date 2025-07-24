@@ -1,5 +1,5 @@
 import pickle
-
+from typing import Any
 
 shoplistfile = 'shoplist.pkl'
 
@@ -11,6 +11,6 @@ f.close()
 
 del shoplist
 
-f = open(shoplistfile, 'rb')
+f = open(shoplistfile, 'rb')  # type: ignore
 storedlist = pickle.load(f)
 print(storedlist)

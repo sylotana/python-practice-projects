@@ -2,15 +2,15 @@ from fastapi import APIRouter, Path, HTTPException, status, Request, Depends
 from model import Todo, TodoItem, TodoItems
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-import json
+from starlette.responses import Response
 
 todo_router = APIRouter()
-todo_list = []
+todo_list: list = []
 templates = Jinja2Templates(directory="templates/")
 
 
 @todo_router.get('/todo', response_model=TodoItems)
-async def retrive_todo(request: Request) -> dict:
+async def retrive_todo(request: Request) -> Response:
     return templates.TemplateResponse(
         "todo.html",
         {
@@ -24,7 +24,7 @@ async def retrive_todo(request: Request) -> dict:
 async def get_single_todo(
     request: Request,
     todo_id: int = Path(..., title='The ID of the todo to retrieve.')
-) -> dict:
+) -> Response:
     for todo in todo_list:
         if todo.id == todo_id:
             return templates.TemplateResponse(
@@ -41,17 +41,17 @@ async def get_single_todo(
 
 
 @todo_router.post('/todo', status_code=201)
-async def add_todo(request: Request, todo: Todo = Depends(Todo.as_form)) -> dict:
+async def add_todo(request: Request, todo: Todo = Depends(Todo.as_form)) -> Response:
     todo.id = len(todo_list) + 1
     todo_list.append(todo)
     return RedirectResponse(url='/todo', status_code=303)
-    return templates.TemplateResponse(
-        "todo.html",
-        {
-            "request": request,
-            "todos": todo_list
-        }
-    )
+    # return templates.TemplateResponse(
+    #     "todo.html",
+    #     {
+    #         "request": request,
+    #         "todos": todo_list
+    #     }
+    # )
 
 
 @todo_router.put('/todo/{todo_id}')
